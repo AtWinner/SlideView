@@ -191,7 +191,7 @@
     <!-- 天蓝色 -->
     <color name="gray">#808080</color>
     <!-- 灰色 -->
-    <color name="grey">#808080</color>
+    <color name="grey">#182023</color>
     <!-- 灰色 -->
     <color name="olive">#808000</color>
     <!-- 橄榄色 -->
@@ -221,7 +221,7 @@
     <!-- 石蓝色 -->
     <color name="dimgray">#696969</color>
     <!-- 暗灰色 -->
-    <color name="dimgrey">#696969</color>
+    <color name="dimgrey">#182023</color>
     <!-- 暗灰色 -->
     <color name="mediumaquamarine">#66CDAA</color>
     <!-- 中绿色 -->

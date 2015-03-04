@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.ryg.slideview.SlideView.OnSlideListener;
+import com.ryg.sqlite.DBController;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -16,7 +17,9 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends Activity implements OnItemClickListener, OnClickListener,
         OnSlideListener {
@@ -34,12 +37,15 @@ public class MainActivity extends Activity implements OnItemClickListener, OnCli
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initView();
+        DBController controller = new DBController(MainActivity.this, 1);
+//        controller.insert();
+        Toast.makeText(MainActivity.this, controller.query().toString(), Toast.LENGTH_LONG).show();
     }
 
     private void initView() {
         mListView = (ListViewCompat) findViewById(R.id.list);
 
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 10; i++) {
             MessageItem item = new MessageItem();
             if (i % 3 == 0) {
                 item.iconRes = R.drawable.default_qq_avatar;
@@ -107,7 +113,10 @@ public class MainActivity extends Activity implements OnItemClickListener, OnCli
             holder.msg.setText(item.msg);
             holder.time.setText(item.time);
             holder.deleteHolder.setOnClickListener(MainActivity.this);
-
+            holder.ratingBar1.setNumStars(5);
+            holder.ratingBar1.setRating(3);
+            
+            holder.titleText.setText("悠唐生活");
             return slideView;
         }
 
@@ -123,17 +132,20 @@ public class MainActivity extends Activity implements OnItemClickListener, OnCli
 
     private static class ViewHolder {
         public ImageView icon;
+        public TextView titleText;
         public TextView title;
         public TextView msg;
         public TextView time;
         public ViewGroup deleteHolder;
-
+        public RatingBar ratingBar1;
         ViewHolder(View view) {
             icon = (ImageView) view.findViewById(R.id.icon);
             title = (TextView) view.findViewById(R.id.title);
             msg = (TextView) view.findViewById(R.id.msg);
             time = (TextView) view.findViewById(R.id.time);
             deleteHolder = (ViewGroup)view.findViewById(R.id.holder);
+            ratingBar1 = (RatingBar)view.findViewById(R.id.ratingBar1);
+            titleText = (TextView)view.findViewById(R.id.titleText);
         }
     }
 

@@ -4,7 +4,7 @@
     <item android:drawable="@color/dimgrey" android:state_pressed="true"></item>
     <item android:drawable="@color/dimgrey" android:state_focused="true"></item>
     <item android:drawable="@color/dimgrey" android:state_selected="true"></item>
-    <item android:drawable="@color/gray" android:state_enabled="true"></item>
-    <item android:drawable="@color/gray" android:state_enabled="false"></item>
+    <item android:drawable="@color/dimgrey" android:state_enabled="true"></item>
+    <item android:drawable="@color/dimgrey" android:state_enabled="false"></item>
 
 </selector>

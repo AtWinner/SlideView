@@ -81,7 +81,7 @@ public class SlideView extends LinearLayout {
 
     public void onRequireTouchEvent(MotionEvent event) {
         int x = (int) event.getX();
-        int y = (int) event.getY();
+        int y = (int) event.getY(); 
         int scrollX = getScrollX();
         Log.d(TAG, "x=" + x + "  y=" + y);
 

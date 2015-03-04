@@ -32,7 +32,9 @@ public class DBHelper extends SQLiteOpenHelper {
 				"Stars integer,"+
 				"Charges float,"+
 				"IsRealname BLOB,"+
-				"ImageName varchar(500)"+
+				"ImageName varchar(500),"+
+				"start integer,"+
+				"end integer"+
 				")";
 		db.execSQL(createSql);
 	}

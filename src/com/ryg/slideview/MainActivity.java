@@ -1,11 +1,14 @@
 package com.ryg.slideview;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import com.ryg.model.MessageItem;
 import com.ryg.slideview.SlideView.OnSlideListener;
 import com.ryg.sqlite.DBController;
 
+import android.R.integer;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
@@ -28,36 +31,46 @@ public class MainActivity extends Activity implements OnItemClickListener, OnCli
 
     private ListViewCompat mListView;
 
-    private List<MessageItem> mMessageItems = new ArrayList<MainActivity.MessageItem>();
+    private List<MessageItem> mMessageItems = new ArrayList<MessageItem>();
 
     private SlideView mLastSlideViewWithStatusOn;
-
+    private DBController controller;//数据库操作的业务逻辑类
+    private List<HashMap<String, String>> taskList;//任务表的数据集
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        controller = new DBController(MainActivity.this, 1);
+        controller.insert();
+        taskList = controller.queryTask();
         initView();
-        DBController controller = new DBController(MainActivity.this, 1);
-//        controller.insert();
-        Toast.makeText(MainActivity.this, controller.query().toString(), Toast.LENGTH_LONG).show();
+       
+        
+//        Toast.makeText(MainActivity.this, controller.queryTask().toString(), Toast.LENGTH_LONG).show();
     }
 
     private void initView() {
+    	
         mListView = (ListViewCompat) findViewById(R.id.list);
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < taskList.size(); i++) {
             MessageItem item = new MessageItem();
+            HashMap<String, String> map = taskList.get(i);
             if (i % 3 == 0) {
                 item.iconRes = R.drawable.default_qq_avatar;
-                item.title = "腾讯新闻";
-                item.msg = "青岛爆炸满月：大量鱼虾死亡";
-                item.time = "晚上18:18";
             } else {
                 item.iconRes = R.drawable.wechat_icon;
-                item.title = "微信团队";
-                item.msg = "欢迎你使用微信";
-                item.time = "12月18日";
             }
+            item.Charges = Double.valueOf(map.get("Charges"));
+            item.Heavy = Double.valueOf(map.get("Heavy"));
+            item.ID = map.get("ID");
+            item.ImageName = map.get("ImageName");
+            item.IsRealname = Integer.parseInt(map.get("IsRealname"));
+            item.OtherWelfare = map.get("OtherWelfare");
+            item.Stars= Integer.parseInt(map.get("Stars"));
+            item.TaskAddress = map.get("TaskAddress");
+            item.TaskRequirement = map.get("TaskRequirement");
+            item.TitleName = map.get("TitleName");
             mMessageItems.add(item);
         }
         mListView.setAdapter(new SlideAdapter());
@@ -83,13 +96,14 @@ public class MainActivity extends Activity implements OnItemClickListener, OnCli
             return mMessageItems.get(position);
         }
 
-        @Override
+        @Override 
         public long getItemId(int position) {
             return position;
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(int position, View convertView, ViewGroup parent) 
+        {
             ViewHolder holder;
             SlideView slideView = (SlideView) convertView;
             if (slideView == null) {
@@ -109,43 +123,38 @@ public class MainActivity extends Activity implements OnItemClickListener, OnCli
             item.slideView.shrink();
 
             holder.icon.setImageResource(item.iconRes);
-            holder.title.setText(item.title);
-            holder.msg.setText(item.msg);
-            holder.time.setText(item.time);
             holder.deleteHolder.setOnClickListener(MainActivity.this);
-            holder.ratingBar1.setNumStars(5);
-            holder.ratingBar1.setRating(3);
-            
-            holder.titleText.setText("悠唐生活");
+            holder.titleText.setText(item.TitleName);
+            holder.textViewHeavy.setText(String.valueOf(item.Heavy));
+            holder.textViewOtherWelfare.setText(item.OtherWelfare);
+            holder.textViewTaskAddress.setText(item.TaskAddress);
+            holder.textViewTaskRequirement.setText(item.TaskRequirement);
+            holder.textViewCharges.setText(String.valueOf(item.Charges));
             return slideView;
         }
 
     }
 
-    public class MessageItem {
-        public int iconRes;
-        public String title;
-        public String msg;
-        public String time;
-        public SlideView slideView;
-    }
+    
 
     private static class ViewHolder {
         public ImageView icon;
         public TextView titleText;
-        public TextView title;
-        public TextView msg;
-        public TextView time;
         public ViewGroup deleteHolder;
-        public RatingBar ratingBar1;
+        public TextView textViewTaskRequirement;
+        public TextView textViewHeavy;
+        public TextView textViewOtherWelfare;
+        public TextView textViewTaskAddress;
+        public TextView textViewCharges;
         ViewHolder(View view) {
             icon = (ImageView) view.findViewById(R.id.icon);
-            title = (TextView) view.findViewById(R.id.title);
-            msg = (TextView) view.findViewById(R.id.msg);
-            time = (TextView) view.findViewById(R.id.time);
             deleteHolder = (ViewGroup)view.findViewById(R.id.holder);
-            ratingBar1 = (RatingBar)view.findViewById(R.id.ratingBar1);
             titleText = (TextView)view.findViewById(R.id.titleText);
+            textViewTaskAddress = (TextView)view.findViewById(R.id.textViewTaskAddress);
+            textViewTaskRequirement = (TextView)view.findViewById(R.id.textViewTaskRequirement);
+            textViewHeavy = (TextView)view.findViewById(R.id.textViewHeavy);
+            textViewOtherWelfare = (TextView)view.findViewById(R.id.textViewOtherWelfare);
+            textViewCharges = (TextView)view.findViewById(R.id.textViewCharges);
         }
     }
 
@@ -172,4 +181,32 @@ public class MainActivity extends Activity implements OnItemClickListener, OnCli
             Log.e(TAG, "onClick v=" + v);
         }
     }
+    /**
+     * 获取字符串中的所有数字
+     * @param s
+     * @return
+     */
+    private List<Integer> GetNumber(String s)
+	{
+		List<Integer> list = new ArrayList<Integer>();
+		char[] a = s.toCharArray();
+		int before = 0;
+		int after = 0;
+		String intStr = "";
+		for(int i = 0; i < a.length; i++)
+		{
+			if(Character.isDigit(a[i]))
+			{
+				before = after;
+				after = i;
+				if(after - before >1 && !intStr.equals(""))
+				{
+					list.add(Integer.valueOf(intStr));
+					intStr = "";
+				}
+				intStr +=a[i];
+			}
+		}
+		return list;
+	}
 }

@@ -1,6 +1,6 @@
 package com.ryg.slideview;
 
-import com.ryg.slideview.MainActivity.MessageItem;
+import com.ryg.model.MessageItem;
 
 import android.content.Context;
 import android.util.AttributeSet;

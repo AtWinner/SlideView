@@ -23,7 +23,17 @@ public class DBHelper extends SQLiteOpenHelper {
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		String createSql = "Create Table NeedInfo ("+
-				"id integer primary key autoincrement, name varchar(20)" + ")";
+				"ID integer primary key autoincrement,"+
+				"TitleName varchar(100),"+
+				"TaskRequirement varchar(1000),"+
+				"Heavy float,"+
+				"OtherWelfare varchar(1000),"+
+				"TaskAddress varchar(1000),"+
+				"Stars integer,"+
+				"Charges float,"+
+				"IsRealname BLOB,"+
+				"ImageName varchar(500)"+
+				")";
 		db.execSQL(createSql);
 	}
 

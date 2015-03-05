@@ -18,4 +18,6 @@ public class MessageItem {
 	public double Charges;
 	public int IsRealname;
 	public String ImageName;
+	public int start;
+	public int end;
 }

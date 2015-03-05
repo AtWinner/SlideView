@@ -10,14 +10,20 @@ import com.ryg.sqlite.DBController;
 
 import android.R.integer;
 import android.app.Activity;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.RatingBar;
@@ -41,12 +47,13 @@ public class MainActivity extends Activity implements OnItemClickListener, OnCli
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         controller = new DBController(MainActivity.this, 1);
-        controller.insert();
+//        controller.insert();
+//        controller.insert("悠唐生活", "80公里，骑行，测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试", 
+//        		"0", "无", "北京市东城区崇文门外大街40号", "5", "150", "1", "hehe", "0", "2");
+//        controller.execSql("update NeedInfo set Heavy = 20 where id in (2,4)");
         taskList = controller.queryTask();
         initView();
-       
-        
-//        Toast.makeText(MainActivity.this, controller.queryTask().toString(), Toast.LENGTH_LONG).show();
+       bindEvent();
     }
 
     private void initView() {
@@ -71,12 +78,26 @@ public class MainActivity extends Activity implements OnItemClickListener, OnCli
             item.TaskAddress = map.get("TaskAddress");
             item.TaskRequirement = map.get("TaskRequirement");
             item.TitleName = map.get("TitleName");
+            item.start = Integer.parseInt(map.get("start"));
+            item.end = Integer.parseInt(map.get("end"));
             mMessageItems.add(item);
         }
         mListView.setAdapter(new SlideAdapter());
         mListView.setOnItemClickListener(this);
     }
+    
+    private void bindEvent()
+    {
+    	mListView.setOnItemLongClickListener(new OnItemLongClickListener() {
 
+			@Override
+			public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
+					int arg2, long arg3) {
+				Toast.makeText(MainActivity.this, String.valueOf(arg2), Toast.LENGTH_SHORT).show();
+				return false;
+			}
+		});
+    }
     private class SlideAdapter extends BaseAdapter {
 
         private LayoutInflater mInflater;
@@ -125,11 +146,37 @@ public class MainActivity extends Activity implements OnItemClickListener, OnCli
             holder.icon.setImageResource(item.iconRes);
             holder.deleteHolder.setOnClickListener(MainActivity.this);
             holder.titleText.setText(item.TitleName);
-            holder.textViewHeavy.setText(String.valueOf(item.Heavy));
+            
+            holder.textViewHeavy.setText(item.Heavy == 0 ? "无" : (String.valueOf(item.Heavy) + "kg"));
+            holder.textViewHeavy.setTextColor(Color.RED);
+            
             holder.textViewOtherWelfare.setText(item.OtherWelfare);
+            if(item.OtherWelfare.equals("无"))
+            {
+            	holder.textViewOtherWelfare.setTextColor(Color.BLACK);
+            }
+            else
+            {
+            	holder.textViewOtherWelfare.setTextColor(Color.RED);
+            }
+            
             holder.textViewTaskAddress.setText(item.TaskAddress);
-            holder.textViewTaskRequirement.setText(item.TaskRequirement);
+            
+            SpannableString ss = new SpannableString(item.TaskRequirement);
+            ss.setSpan(new ForegroundColorSpan(Color.RED), item.start, item.end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            holder.textViewTaskRequirement.setText(ss);
+            
             holder.textViewCharges.setText(String.valueOf(item.Charges));
+            holder.textViewCharges.setTextColor(Color.RED);
+            if(item.IsRealname == 1)
+            {
+            	holder.IsRealName.setText("实名认证");
+            	holder.IsRealName.setTextColor(Color.rgb(68, 139, 203));
+            }
+            else
+            {
+            	holder.IsRealName.setText("");
+            }
             return slideView;
         }
 
@@ -146,6 +193,7 @@ public class MainActivity extends Activity implements OnItemClickListener, OnCli
         public TextView textViewOtherWelfare;
         public TextView textViewTaskAddress;
         public TextView textViewCharges;
+        public TextView IsRealName;
         ViewHolder(View view) {
             icon = (ImageView) view.findViewById(R.id.icon);
             deleteHolder = (ViewGroup)view.findViewById(R.id.holder);
@@ -155,6 +203,7 @@ public class MainActivity extends Activity implements OnItemClickListener, OnCli
             textViewHeavy = (TextView)view.findViewById(R.id.textViewHeavy);
             textViewOtherWelfare = (TextView)view.findViewById(R.id.textViewOtherWelfare);
             textViewCharges = (TextView)view.findViewById(R.id.textViewCharges);
+            IsRealName = (TextView)view.findViewById(R.id.IsRealName);
         }
     }
 
@@ -181,32 +230,4 @@ public class MainActivity extends Activity implements OnItemClickListener, OnCli
             Log.e(TAG, "onClick v=" + v);
         }
     }
-    /**
-     * 获取字符串中的所有数字
-     * @param s
-     * @return
-     */
-    private List<Integer> GetNumber(String s)
-	{
-		List<Integer> list = new ArrayList<Integer>();
-		char[] a = s.toCharArray();
-		int before = 0;
-		int after = 0;
-		String intStr = "";
-		for(int i = 0; i < a.length; i++)
-		{
-			if(Character.isDigit(a[i]))
-			{
-				before = after;
-				after = i;
-				if(after - before >1 && !intStr.equals(""))
-				{
-					list.add(Integer.valueOf(intStr));
-					intStr = "";
-				}
-				intStr +=a[i];
-			}
-		}
-		return list;
-	}
 }

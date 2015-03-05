@@ -33,6 +33,37 @@ public class DBController {
 		SQLiteDatabase db = helper.getWritableDatabase();
 		db.execSQL(insertSql);
 	}
+	/**
+	 * 
+	 * @param TitleName 标题
+	 * @param TaskRequirement 任务需求
+	 * @param Heavy 负重
+	 * @param OtherWelfare 其他福利
+	 * @param TaskAddress 任务地址
+	 * @param Stars 星星数
+	 * @param Charges 佣金
+	 * @param IsRealname 是否实名认证
+	 * @param ImageName logo图片名称
+	 * @param start 标红开始位置
+	 * @param end 标红结束位置
+	 */
+	public void insert(String TitleName,String TaskRequirement,String Heavy,String OtherWelfare,String TaskAddress,String  Stars, String Charges, String IsRealname, String ImageName, String start, String end)
+	{
+		String insertSql = "insert into NeedInfo (TitleName, TaskRequirement, Heavy, OtherWelfare, TaskAddress, Stars, Charges, IsRealname, ImageName, start, end) "
+				+ "values('"+TitleName+"', "
+				+ "'"+TaskRequirement+"',"
+				+ Heavy +","
+				+ "'"+OtherWelfare+"',"
+				+ "'"+TaskAddress+"',"
+				+ Stars+","
+				+ Charges+","
+				+ IsRealname+","
+				+ "'"+ImageName+"',"
+				+ start + ","
+				+ end + ")";
+		SQLiteDatabase db = helper.getWritableDatabase();
+		db.execSQL(insertSql);
+	}
 	 public List<HashMap<String, String>> queryTask()
 	 {
 	        List<HashMap<String, String>> list=new ArrayList<HashMap<String, String>>();
@@ -58,5 +89,10 @@ public class DBController {
 	            e.printStackTrace();
 	        }
 	        return list;        
-	    }
+	 }
+	 public void execSql(String SQL)
+	 {
+		 SQLiteDatabase db = helper.getWritableDatabase();
+		 db.execSQL(SQL);
+	 }
 }
